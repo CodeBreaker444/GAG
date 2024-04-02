@@ -1,0 +1,4 @@
+authenticated-prefix: /auth
+unauthenticated-prefix: /unauth
+jwt-rsa-public-key: tests/testkeys.pub
+jwt-rsa-private-key: tests/testkeys.key
