@@ -1,9 +1,12 @@
 # ⚡️Lightning fast GO API Gateway(GAG) for JWT based Authentication
+<div align="center">
+    <img src="gag-logo.png" alt="GAG-GO-API-GATEWAY">
+</div>
 
 Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in GO ! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both gRPC and HTTP for efficient microservice communication.
-
-![GAG-GO-API-GATEWAY](GAG.png)
-
+<div align="center">
+    <img src="GAG.png" alt="GAG-GO-API-GATEWAY">
+</div>
 
 ## Table of Contents
 
@@ -58,6 +61,14 @@ In the future, we plan to enhance GAG with the following features:
 
 To build and run GAG, follow these instructions:
 
+Generate keys
+```
+ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
+# Don't add passphrase 
+openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
+
+```
+
 1. **Building from Source**
 
    - Ensure you have Go installed. If not, you can download it from [here](https://golang.org/doc/install).
@@ -80,6 +91,7 @@ To build and run GAG, follow these instructions:
      ```
 
 2. **Running the Binary**
+
 
    - Once you have built the binary, you can run it with the following command:
 
