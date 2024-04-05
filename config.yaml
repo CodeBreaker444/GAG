@@ -1,4 +1,7 @@
 authenticated-prefix: /auth
 unauthenticated-prefix: /unauth
-jwt-rsa-public-key: tests/testkeys.pub
-jwt-rsa-private-key: tests/testkeys.key
+jwt-rsa-public-key: tests/testkeys.pub ## Used for verifying JWT tokens
+jwt-rsa-private-key: tests/testkeys.key ## Required only for generating JWT tokens
+server-address: localhost:8000
+ENABLE_CORS_MODE: true
+ENABLE_CORS_AUTH: true

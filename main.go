@@ -1,97 +1,49 @@
 package main
 
 import (
-    "io/ioutil"
+    "fmt"
     "net/http"
     "os"
-	"fmt"
-	"reflect"
-	"github.com/codebreaker444/gag/api/handlers"
-	"github.com/codebreaker444/gag/api/middleware"
-	mainutils"github.com/codebreaker444/gag/utils"
+
+    "github.com/codebreaker444/gag/api/handlers"
+    "github.com/codebreaker444/gag/api/middleware"
+    utils "github.com/codebreaker444/gag/utils"
     log "github.com/sirupsen/logrus"
-    "gopkg.in/yaml.v3"
 )
-
-func checkAllFieldsPresent(data mainutils.Config) error {
-	v := reflect.ValueOf(data)
-	t := v.Type()
-	for i := 0; i < v.NumField(); i++ {
-		field := t.Field(i)
-		key := field.Tag.Get("yaml")
-		value := v.Field(i).Interface().(string)
-		if value == "" {
-			return fmt.Errorf("missing field '%s' in YAML file", key)
-		}
-	}
-	return nil
-}
-
-
-func parseYamlFile(yamlFile string) (mainutils.Config, error) { // 2. SHIFT IT TO utils/mainUtils.go
-    yamlData, err := ioutil.ReadFile(yamlFile)
-    if err != nil {
-        return mainutils.Config{}, err
-	}
-
-    var data mainutils.Config
-    err = yaml.Unmarshal(yamlData, &data)
-    if err != nil {
-        return mainutils.Config{}, err
-    }
-	if err := checkAllFieldsPresent(data); err != nil {
-		return mainutils.Config{}, err
-	}
-
-
-
-    return data, nil
-}
 
 func main() {
     if len(os.Args) < 2 {
         log.Fatal("Usage: go run main.go <yaml_file>")
     }
+
     log.SetLevel(log.DebugLevel)
-    Configdata, err := parseYamlFile(os.Args[1])
-    if err != nil {
-        log.WithFields(log.Fields{
-            "error": err,
-        }).Fatal("Error parsing YAML file")
-    }
-    log.WithFields(log.Fields{
-        "config": Configdata,
-    }).Info("Parsed config")
-	
-	publicKey,err := ioutil.ReadFile(Configdata.JwtRSAPublicKey)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-			}).Error("Error reading public key")
-			return
-		}
-	fmt.Println(string(publicKey))
-	_, err = mainutils.VerifyPublicKeyFormat(string(publicKey))
-	if err != nil {
-		log.WithFields(log.Fields{
-			"error": err,
-		}).Error("Error verifying public key format")
-		return
-	}
-	
 
-	rootRouter := http.NewServeMux()
-	handlers.RootHandler(rootRouter)
-	server := http.Server{
-		Addr:    "localhost:8000",
-		Handler: middleware.PrimaryMiddleware(rootRouter,Configdata),
-	}
-	err = server.ListenAndServe()
-
+    configData, err := utils.ParseYamlFile(os.Args[1])
     if err != nil {
-        log.WithFields(log.Fields{
-            "error": err,
-        }).Fatal("Error starting server")
+        log.WithError(err).Fatal("Error parsing YAML file")
     }
-	fmt.Println("Server started at localhost:8000")
+
+    log.WithField("config", configData).Info("Parsed config")
+
+    _, rsaKeys := utils.VerifyAllKeys(configData)
+    log.Info("Processed Public and Private keys")
+
+    rootRouter := http.NewServeMux()
+    handlers.RootHandler(rootRouter)
+
+    stackMiddleware := utils.MiddlewareStack(
+        middleware.PrimaryMiddleware(configData, *rsaKeys),
+        middleware.CorsMiddleware,
+    )
+
+    server := http.Server{
+        Addr:    configData.ServerAddress,
+        Handler: stackMiddleware(rootRouter),
+    }
+
+    if err := server.ListenAndServe(); err != nil {
+        log.WithError(err).Fatal("Error starting server")
+    }
+
+    fmt.Printf("Server started at %s\n", configData.ServerAddress)
 }

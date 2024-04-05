@@ -3,13 +3,21 @@
 </div>
 
 ----
-# 🚀High Performance GO API Gateway(GAG) for JWT based Authentication
+# 🚀High Performance GO API Gateway(GAG) for JWT based Authentication with CORS support
 
 
 Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in GO ! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both gRPC and HTTP for efficient microservice communication.
 <div align="center">
     <img src="GAG.png" alt="GAG-GO-API-GATEWAY">
 </div>
+
+## Use cases
+
+- [x] Rapid Prototype Deployment with Authentication: Utilize the GAG binary to forward requests to your application, accelerating the process of prototype deployment while ensuring secure authentication.``````
+- [x] Overcoming CORS Restrictions: Bypass Cross-Origin Resource Sharing (CORS) limitations that prevent direct API calls to third-party services. With GAG, you can seamlessly interact with APIs regardless of their CORS policies.```Compatible```
+- [x] Microservices Routing - In a microservices architecture, use GAG to route requests to the appropriate service based on the request path, method, or other parameters.``````
+- [] Rate Limiting - Implement rate limiting with GAG to control the number of requests a client can make to your application within a certain time period, protecting your services from abuse and overuse. ```In Progress```
+- [] SSL Termination - Utilize GAG to handle incoming SSL connections, decrypt the requests, and distribute them to your internal network. This offloads the SSL decryption task from your application servers, improving overall performance.
 
 ## Table of Contents
 

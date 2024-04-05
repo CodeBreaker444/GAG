@@ -1,81 +1,39 @@
 package middleware
 
 import (
-	"crypto/x509"
-	"encoding/pem"
-	"fmt"
-	"io/ioutil"
 	"net/http"
-
-	mainutils "github.com/codebreaker444/gag/utils"
-	"github.com/golang-jwt/jwt/v5"
+	"context"
+	utils "github.com/codebreaker444/gag/utils"
 	log "github.com/sirupsen/logrus"
 	//import type config from main.go
 )
 
-func PrimaryMiddleware(next http.Handler, Configdata mainutils.Config ) http.Handler {
-
+func PrimaryMiddleware(Configdata utils.Config, rsaKeys utils.RSAkeys ) utils.Middleware {
+return func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// print Authorization header if it exists
+		ctx := r.Context()
 		authorization := r.Header.Get("Authorization")
-		if authorization != "" {
+		if authorization == "" {
+			// set request context to unauthenticated
 			log.WithFields(log.Fields{
-
 				"Authorization": authorization,
-			}).Debug("Authorization header")
+			}).Debug("No Authorization header")
+			ctx = context.WithValue(ctx, "authenticated", false)
+			r = r.WithContext(ctx)
+			next.ServeHTTP(w, r)
+			
+
 		}
 		// load public key from config
-		publicKey,err := ioutil.ReadFile(Configdata.JwtRSAPublicKey)
-		privateKey,err := ioutil.ReadFile(Configdata.JwtRSAPrivateKey)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-			}).Error("Error reading public key")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		// convert public key to string
-		fmt.Println(string(publicKey))
-
-		rsaPublicKey, err := mainutils.VerifyPublicKeyFormat(string(publicKey))
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-			}).Error("Error verifying public key format")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		fmt.Println("rsaPublicKey: ",rsaPublicKey)
-		block, _ := pem.Decode(privateKey)
-		decodedPrivateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-			}).Error("Error verifying private key format")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+		
 		// rsaPrivateKey, ok := decodedPrivateKey.(*rsa.PrivateKey)
 	
-		clientClaims := jwt.MapClaims{
-			"name": "John Doe",
-			"admin": true,
-		}
-
-
-		generatedToken,err:=mainutils.GenerateJWTToken(clientClaims,decodedPrivateKey)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"error": err,
-			}).Error("Error generating")
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		fmt.Println("generatedToken: ",generatedToken)
+		
 		// split token
 		au := authorization[7:]
 
-		_,err=mainutils.VerifyTokenRSA(au,rsaPublicKey )
+		_,err:=utils.VerifyTokenRSA(au, rsaKeys.PublicKey)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"error": err,
@@ -89,6 +47,25 @@ func PrimaryMiddleware(next http.Handler, Configdata mainutils.Config ) http.Han
 			"URL": r.URL,
 		}).Debug("Request URL")
 
+		next.ServeHTTP(w, r)
+
+	
+})
+}}
+
+func CorsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// set headers for CORS
+
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		// set brand name
+		w.Header().Set("X-API-GATEWAY", "github.com/codebreaker444/gag")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }
