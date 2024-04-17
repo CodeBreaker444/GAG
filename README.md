@@ -18,24 +18,99 @@ Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely writte
 
 ## Use cases
 
-- [x] Rapid Prototype Deployment with Authentication: Utilize the GAG binary to forward requests to your application, accelerating the process of prototype deployment while ensuring secure authentication.``````
-- [x] Overcoming CORS Restrictions: Bypass Cross-Origin Resource Sharing (CORS) limitations that prevent direct API calls to third-party services. With GAG, you can seamlessly interact with APIs regardless of their CORS policies.```Compatible```
-- [x] Microservices Routing - In a microservices architecture, use GAG to route requests to the appropriate service based on the request path, method, or other parameters.``````
+- [x] Rapid Prototype Deployment with Authentication: Utilize the GAG binary to forward requests to your application, accelerating the process of prototype deployment while ensuring secure authentication.
+
+- [x] Overcoming CORS Restrictions: Bypass Cross-Origin Resource Sharing (CORS) limitations that prevent direct API calls to third-party services. With GAG, you can seamlessly interact with APIs regardless of their CORS policies.
+
+- [x] Microservices Routing - In a microservices architecture, use GAG to route requests to the appropriate service based on the request path, method, or other parameters.
+
 - [] Rate Limiting - Implement rate limiting with GAG to control the number of requests a client can make to your application within a certain time period, protecting your services from abuse and overuse. ```In Progress```
-- [] SSL Termination - Utilize GAG to handle incoming SSL connections, decrypt the requests, and distribute them to your internal network. This offloads the SSL decryption task from your application servers, improving overall performance.
+
+- [] SSL Termination - Utilize GAG to handle incoming SSL connections, decrypt the requests, and distribute them to your internal network. This offloads the SSL decryption task from your application servers, improving overall performance. ```In Progress```
 
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Current Development](#current-development)
-3. [Scope of Work](#scope-of-work)
-4. [Future Work](#future-work)
+2. [Installation](#installation)
+3. [Current Development](#current-development)
 5. [Building and Running](#building-and-running)
+4. [Future Work](#future-work)
+
 6. [License](#license)
 
 ## Introduction
 
 API gateways play a crucial role in modern microservices architectures by providing a single entry point for managing communication between services. The Lightning Fast GO API Gateway (GAG) is designed to offer high performance, flexibility, and security for microservice environments. With support for JWT-based authentication, GAG ensures secure communication between services while maintaining lightning-fast response times.
+
+
+### CORS Mode
+
+In CORS (Cross-Origin Resource Sharing) mode, the server acts as a proxy to handle cross-origin requests. This is useful when you want to make requests from a web page to a server that uses a different domain, protocol, or port. The server in CORS mode adds the necessary headers to the response to allow the browser to make these cross-origin requests.
+
+In this mode, the server uses the `CORS_API_KEY` for authentication. The client must include this API key in their requests to be allowed to make cross-origin requests.
+
+### GAG Mode
+
+In GAG (Gateway Authentication Gateway) mode, the server acts as a gateway that authenticates incoming requests before forwarding them to the destination server. This is useful when you want to add an authentication layer to a server that doesn't have one.
+
+In this mode, the server uses JWT (JSON Web Tokens) for authentication. The client must include a valid JWT in their requests to be authenticated. 
+
+- All the authenticated requests are sent to the preconfigured URL and Path i.e `GAG_DESTINATION_URL` and `GAG_AUTHENTICATED_PREFIX`
+
+- All the Un-authenticated requests are sent to the preconfigured URL and Path i.e `GAG_DESTINATION_URL` and `GAG_UNAUTHENTICATED_PREFIX`
+
+
+## Installation
+
+To install the project, you need to run the [``install.sh``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/install.sh") script. This script will detect your OS and architecture, download the appropriate binary from the project's GitHub releases, and install it in `/usr/local/bin`.
+
+```sh
+curl -sSL https://raw.githubusercontent.com/username/repo/main/install.sh | sh
+```
+
+## Configuration
+
+The project's behavior can be configured through the [``config.yaml``]("config.yaml") file. Here is a table describing each parameter in the file:
+Sure, here are the tables divided for the two modes:
+
+### GAG Mode Configuration
+
+| Parameter | Optional/Mandatory |
+| --- | --- |
+| `GAG_AUTHENTICATED_PREFIX` | Mandatory |
+| `GAG_UNATHETICATED_PREFIX` | Mandatory |
+| `GAG_JWT_RSA_PUBLIC_KEY` | Mandatory |
+| `GAG_JWT_RSA_PRIVATE_KEY` | Optional |
+| `GAG_SERVER_ADDRESS` | Mandatory |
+| `GAG_DESTINATION_URL` | Mandatory |
+| `MODE` | Mandatory |
+
+### CORS Mode Configuration
+
+| Parameter | Optional/Mandatory |
+| --- | --- |
+| `GAG_AUTHENTICATED_PREFIX` | Mandatory |
+| `GAG_UNATHETICATED_PREFIX` | Mandatory |
+| `GAG_SERVER_ADDRESS` | Mandatory |
+| `GAG_DESTINATION_URL` | Mandatory |
+| `MODE` | Mandatory |
+| `CORS_API_KEY` | Mandatory |
+
+In GAG mode, the `GAG_JWT_RSA_PUBLIC_KEY` and `GAG_JWT_RSA_PRIVATE_KEY` parameters are used for JWT token verification and generation, respectively. The `GAG_JWT_RSA_PRIVATE_KEY` is optional and only needed if you want to generate JWT tokens.
+
+In CORS mode, the `CORS_API_KEY` parameter is used for API key authentication.
+
+
+- `GAG_AUTHENTICATED_PREFIX`: The URL prefix for authenticated routes.
+- `GAG_UNATHETICATED_PREFIX`: The URL prefix for unauthenticated routes.
+- `GAG_JWT_RSA_PUBLIC_KEY`: The path to the RSA public key used for verifying JWT tokens. This is required in GAG mode.
+- `GAG_JWT_RSA_PRIVATE_KEY`: The path to the RSA private key used for generating JWT tokens. This is optional and only needed in GAG mode.
+- `GAG_SERVER_ADDRESS`: The address where the GAG server will run (e.g., `localhost:8000`).
+- `GAG_DESTINATION_URL`: The destination URL where the GAG server will forward the requests (e.g., `http://localhost:8001`).
+- `MODE`: The mode in which the GAG server will run. This can be either `CORS` or [``GAG``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/GAG").
+- `CORS_API_KEY`: The API key required for CORS mode. This is mandatory in CORS mode.
+
+Please replace the values in the [``config.yaml``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/config.yaml") file with your own before running the project.
 
 ## Current Development
 
@@ -45,33 +120,12 @@ At the current stage of development, GAG offers the following features:
   
 - **Blazing-Fast Performance**: Leveraging the power of Go programming language, GAG delivers exceptional performance, ensuring minimal latency in microservice communication.
   
-- **gRPC and HTTP Support**: GAG seamlessly integrates both gRPC and HTTP protocols, providing flexibility in communication between microservices based on their specific requirements.
+- **gRPC and HTTP Support**: GAG seamlessly integrates both gRPC and HTTP protocols, providing flexibility in communication between microservices based on their specific requirements. (gRPC support will be added soon!)
   
 - **Configurability**: GAG is highly configurable, allowing users to customize authentication mechanisms, routing rules, and other parameters according to their needs.
 
-## Scope of Work
 
-The current scope of work for GAG includes:
 
-- [x] Implement JWT-based authentication with RSA decoding.
-  
-- [x] Support both gRPC and HTTP protocols for microservice communication.
-  
-- [x] Ensure high performance and low latency for API gateway operations.
-  
-- [x] Provide configuration options for fine-tuning gateway behavior.
-
-## Future Work
-
-In the future, we plan to enhance GAG with the following features:
-
-- [ ] Support for additional JWT decoding algorithms (e.g., HMAC, ECDSA).
-  
-- [ ] Implement rate limiting and throttling capabilities for improved security and resource management.
-  
-- [ ] Integrate with monitoring and logging solutions for enhanced observability.
-  
-- [ ] Develop comprehensive documentation and examples for easier adoption and integration.
 
 ## Building and Running
 
@@ -84,6 +138,7 @@ ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key
 openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 
 ```
+
 
 1. **Building from Source**
 
@@ -117,10 +172,24 @@ openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 
    - Replace `[arguments]` with the necessary arguments for configuring GAG. You can refer to the documentation or help command for details on available arguments and their usage.
 
+## Future Work
+
+In the future, we plan to enhance GAG with the following features:
+
+- [ ] Support for additional JWT decoding algorithms (e.g., HMAC, ECDSA).
+  
+- [ ] Implement rate limiting and throttling capabilities for improved security and resource management.
+  
+- [ ] Integrate with monitoring and logging solutions for enhanced observability.
+  
+- [ ] Develop comprehensive documentation and examples for easier adoption and integration.
+
+
 ## License
 
 The Lightning Fast GO API Gateway (GAG) is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this software for any purpose, subject to the terms of the license.
 
 ---
+
 
 Thank you for considering the Lightning Fast GO API Gateway (GAG) for your microservices architecture. We welcome contributions, feedback, and suggestions to make GAG even better! If you have any questions or ideas, please don't hesitate to reach out to us.
