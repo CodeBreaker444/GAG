@@ -46,6 +46,7 @@ return func(next http.Handler) http.Handler {
 		log.WithFields(log.Fields{
 			"URL": r.URL,
 		}).Debug("Request URL")
+		w.Header().Set("X-API-GATEWAY", "github.com/codebreaker444/gag")
 
 		next.ServeHTTP(w, r)
 
@@ -53,14 +54,27 @@ return func(next http.Handler) http.Handler {
 })
 }}
 
-func CorsMiddleware(next http.Handler) http.Handler {
+func CorsMiddleware(Configdata utils.Config) utils.Middleware {
+	return func(next http.Handler) http.Handler {
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// set headers for CORS
+		log.Println("Headers: ",r.Header)
+
+		// check access key in headers
+		accessKey := r.Header.Get("x-gag-api-key")
+		if accessKey != Configdata.CorsApiKey {
+			log.WithFields(log.Fields{
+				"accessKey": accessKey,
+			}).Error("Invalid access key")
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		// set brand name
+		
+		
 		w.Header().Set("X-API-GATEWAY", "github.com/codebreaker444/gag")
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
@@ -68,4 +82,16 @@ func CorsMiddleware(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+}
+
+
+
+func MiddlewareSwitch(configData utils.Config, rsaKeys utils.RSAkeys) utils.Middleware {
+	if configData.Mode == "GAG" {
+		log.Info("GAG mode selected")
+		return PrimaryMiddleware(configData, rsaKeys)
+	}
+	log.Info("CORS mode selected")
+	return CorsMiddleware(configData)
 }

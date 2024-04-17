@@ -1,7 +1,8 @@
-authenticated-prefix: /auth
-unauthenticated-prefix: /unauth
-jwt-rsa-public-key: tests/testkeys.pub ## Used for verifying JWT tokens
-jwt-rsa-private-key: tests/testkeys.key ## Required only for generating JWT tokens
-server-address: localhost:8000
-ENABLE_CORS_MODE: true
-ENABLE_CORS_AUTH: true
+GAG_AUTHENTICATED_PREFIX: /auth
+GAG_UNATHETICATED_PREFIX: /unauth
+GAG_JWT_RSA_PUBLIC_KEY: tests/testkeys.pub ## Used for verifying JWT tokens
+GAG_JWT_RSA_PRIVATE_KEY: tests/testkeys.key ## Required only for generating JWT tokens
+GAG_SERVER_ADDRESS: localhost:8000 ## Eg: localhost:8000
+GAG_DESTINATION_URL: localhost:8000 ## Eg: http://localhost:8001
+MODE: GAG ## CORS or GAG
+CORS_API_KEY: 1234567890 ## Required only for CORS mode

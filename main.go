@@ -1,44 +1,58 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "os"
+	"flag"
+	"fmt"
+	"net/http"
+	"strings"
 
-    "github.com/codebreaker444/gag/api/handlers"
-    "github.com/codebreaker444/gag/api/middleware"
-    utils "github.com/codebreaker444/gag/utils"
-    log "github.com/sirupsen/logrus"
+	"github.com/codebreaker444/gag/api/handlers"
+	"github.com/codebreaker444/gag/api/middleware"
+	utils "github.com/codebreaker444/gag/utils"
+	log "github.com/sirupsen/logrus"
 )
+type slashFix struct {
+    mux http.Handler
+}
 
+func (h *slashFix) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    r.URL.Path = strings.Replace(r.URL.Path, "//", "/", -1)
+    h.mux.ServeHTTP(w, r)
+}
 func main() {
-    if len(os.Args) < 2 {
-        log.Fatal("Usage: go run main.go <yaml_file>")
+    var rsaKeys *utils.RSAkeys = &utils.RSAkeys{}
+    configFile := flag.String("config", "", "Path to the YAML configuration file")
+    flag.Parse()
+
+    if *configFile == "" {
+        log.Fatal("Usage: gag --config=<yaml_file>")
     }
 
     log.SetLevel(log.DebugLevel)
 
-    configData, err := utils.ParseYamlFile(os.Args[1])
+    configData, err := utils.ParseYamlFile(*configFile)
     if err != nil {
         log.WithError(err).Fatal("Error parsing YAML file")
     }
-
     log.WithField("config", configData).Info("Parsed config")
-
-    _, rsaKeys := utils.VerifyAllKeys(configData)
+    if configData.Mode == "GAG" {
+    _, rsaKeys = utils.VerifyAllKeys(configData)
     log.Info("Processed Public and Private keys")
-
+    }
+    
     rootRouter := http.NewServeMux()
-    handlers.RootHandler(rootRouter)
-
+    handler := &handlers.Handler{
+        Config: configData,
+    }
+    handler.RootHandler(rootRouter)
     stackMiddleware := utils.MiddlewareStack(
-        middleware.PrimaryMiddleware(configData, *rsaKeys),
-        middleware.CorsMiddleware,
+        
+        middleware.MiddlewareSwitch(configData, *rsaKeys),
     )
 
     server := http.Server{
         Addr:    configData.ServerAddress,
-        Handler: stackMiddleware(rootRouter),
+        Handler: &slashFix{stackMiddleware(rootRouter)},
     }
 
     if err := server.ListenAndServe(); err != nil {

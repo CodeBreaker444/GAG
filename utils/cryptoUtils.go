@@ -120,3 +120,4 @@ func VerifyAllKeys(Configdata Config)(error,*RSAkeys){
 	return nil,&RSAkeys{PublicKey:rsaPublicKey,PrivateKey:decodedPrivateKey}
 
 }
+

@@ -8,8 +8,13 @@
 
 Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in GO ! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both gRPC and HTTP for efficient microservice communication.
 <div align="center">
-    <img src="GAG.png" alt="GAG-GO-API-GATEWAY">
+    <img src="gag-gag.png" alt="GAG-GO-API-GATEWAY">
 </div>
+<p align="center"><u>Mode</u> - <b>GAG</b></p>
+<div align="center">
+    <img src="gag-cors.png" alt="GAG-GO-API-GATEWAY">
+</div>
+<p align="center"><u>Mode</u> - <b>CORS</b></p>
 
 ## Use cases
 
