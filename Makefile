@@ -37,3 +37,16 @@ $(BINARIES:%=%.tar.gz): %.tar.gz: %
 release: test build $(TARS)
 	@echo "Creating release..."
 	gh release create $(VERSION) $(TARS) -t $(VERSION) -n "Release $(VERSION)"
+
+docker-build:
+	@echo "Building docker image..."
+	docker build -t $(VERSION) .
+
+docker-run: docker-build
+	@echo "Running docker image..."
+	docker run -v $(PWD)/$(CONFIG_FILE):/config.yaml $(VERSION) --config /config.yaml
+
+docker-release: docker-build
+	@echo "Creating docker release..."
+	docker tag $(VERSION) $(DOCKER_REPO):$(VERSION)
+	docker push $(DOCKER_REPO):$(VERSION)
