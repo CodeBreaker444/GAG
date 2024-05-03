@@ -24,9 +24,9 @@ Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely writte
 
 - [x] Microservices Routing - In a microservices architecture, use GAG to route requests to the appropriate service based on the request path, method, or other parameters.
 
-- [] Rate Limiting - Implement rate limiting with GAG to control the number of requests a client can make to your application within a certain time period, protecting your services from abuse and overuse. ```In Progress```
+- [ ] Rate Limiting - Implement rate limiting with GAG to control the number of requests a client can make to your application within a certain time period, protecting your services from abuse and overuse. ```In Progress```
 
-- [] SSL Termination - Utilize GAG to handle incoming SSL connections, decrypt the requests, and distribute them to your internal network. This offloads the SSL decryption task from your application servers, improving overall performance. ```In Progress```
+- [ ] SSL Termination - Utilize GAG to handle incoming SSL connections, decrypt the requests, and distribute them to your internal network. This offloads the SSL decryption task from your application servers, improving overall performance. ```In Progress```
 
 ## Table of Contents
 
@@ -35,7 +35,6 @@ Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely writte
 3. [Current Development](#current-development)
 5. [Building and Running](#building-and-running)
 4. [Future Work](#future-work)
-
 6. [License](#license)
 
 ## Introduction
@@ -64,8 +63,10 @@ In this mode, the server uses JWT (JSON Web Tokens) for authentication. The clie
 
 To install the project, you need to run the [``install.sh``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/install.sh") script. This script will detect your OS and architecture, download the appropriate binary from the project's GitHub releases, and install it in `/usr/local/bin`.
 
+> Default CORS
+
 ```sh
-curl -sSL https://raw.githubusercontent.com/username/repo/main/install.sh | sh
+curl -sSL https://raw.githubusercontent.com/CodeBreaker444/GAG/main/install.sh | sh
 ```
 
 ## Configuration
@@ -73,28 +74,21 @@ curl -sSL https://raw.githubusercontent.com/username/repo/main/install.sh | sh
 The project's behavior can be configured through the [``config.yaml``]("config.yaml") file. Here is a table describing each parameter in the file:
 Sure, here are the tables divided for the two modes:
 
-### GAG Mode Configuration
-
-| Parameter | Optional/Mandatory |
-| --- | --- |
-| `GAG_AUTHENTICATED_PREFIX` | Mandatory |
-| `GAG_UNATHETICATED_PREFIX` | Mandatory |
-| `GAG_JWT_RSA_PUBLIC_KEY` | Mandatory |
-| `GAG_JWT_RSA_PRIVATE_KEY` | Optional |
-| `GAG_SERVER_ADDRESS` | Mandatory |
-| `GAG_DESTINATION_URL` | Mandatory |
-| `MODE` | Mandatory |
-
-### CORS Mode Configuration
-
-| Parameter | Optional/Mandatory |
-| --- | --- |
-| `GAG_AUTHENTICATED_PREFIX` | Mandatory |
-| `GAG_UNATHETICATED_PREFIX` | Mandatory |
-| `GAG_SERVER_ADDRESS` | Mandatory |
-| `GAG_DESTINATION_URL` | Mandatory |
-| `MODE` | Mandatory |
-| `CORS_API_KEY` | Mandatory |
+| Mode | Parameter | Optional/Mandatory | Default Value |
+| --- | --- | --- | --- |
+| GAG | `GAG_AUTHENTICATED_PREFIX` | Mandatory | - |
+| GAG | `GAG_UNATHETICATED_PREFIX` | Mandatory | - |
+| GAG | `GAG_JWT_RSA_PUBLIC_KEY` | Mandatory | - |
+| GAG | `GAG_JWT_RSA_PRIVATE_KEY` | Optional | - |
+| GAG | `GAG_SERVER_ADDRESS` | Mandatory | - |
+| GAG | `GAG_DESTINATION_URL` | Mandatory | - |
+| GAG | `MODE` | Mandatory | - |
+| CORS | `GAG_AUTHENTICATED_PREFIX` | Mandatory | - |
+| CORS | `GAG_UNATHETICATED_PREFIX` | Mandatory | - |
+| CORS | `GAG_SERVER_ADDRESS` | Mandatory | - |
+| CORS | `GAG_DESTINATION_URL` | Mandatory | - |
+| CORS | `MODE` | Mandatory | - |
+| CORS | `CORS_API_KEY` | Mandatory | - |
 
 In GAG mode, the `GAG_JWT_RSA_PUBLIC_KEY` and `GAG_JWT_RSA_PRIVATE_KEY` parameters are used for JWT token verification and generation, respectively. The `GAG_JWT_RSA_PRIVATE_KEY` is optional and only needed if you want to generate JWT tokens.
 

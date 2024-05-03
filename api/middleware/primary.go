@@ -88,10 +88,12 @@ func CorsMiddleware(Configdata utils.Config) utils.Middleware {
 
 
 func MiddlewareSwitch(configData utils.Config, rsaKeys utils.RSAkeys) utils.Middleware {
-	if configData.Mode == "GAG" {
-		log.Info("GAG mode selected")
-		return PrimaryMiddleware(configData, rsaKeys)
-	}
-	log.Info("CORS mode selected")
-	return CorsMiddleware(configData)
+    switch configData.Mode {
+    case "GAG":
+        log.Info("GAG mode selected")
+        return PrimaryMiddleware(configData, rsaKeys)
+    default:
+        log.Info("CORS mode selected")
+        return CorsMiddleware(configData)
+    }
 }

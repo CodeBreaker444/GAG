@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"strings"
 	utils "github.com/codebreaker444/gag/utils"
@@ -29,7 +28,7 @@ func (h *Handler) root (w http.ResponseWriter, r *http.Request) {
 	route := r.PathValue("route")
 	log.Println("Root handler: ",route)
 	log.Println("Root handler: ",route)
-	h.forwardRequest(w, r, "http", route)
+	h.ForwardRequest(w, r, "http", route)
 	
 }
 func (h *Handler) corsRoot(w http.ResponseWriter, r *http.Request) {
@@ -56,63 +55,7 @@ func (h *Handler) corsRoot(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid URL Schema", http.StatusBadRequest)
 		return
 	}
-	h.forwardRequest(w, r, schema[0], secondURL)
-}
-func (h *Handler) forwardRequest(w http.ResponseWriter, r *http.Request, schema string, corsurl string) {
-	// get method, path, body, headers from the request
-	method := r.Method
-	body := r.Body
-	var urlPath string
-	log.Println("ForwardRequest:", method, "Body:", body, "Headers:", r.Header)
-	var destinationUrl string
-	if h.Config.Mode == "CORS" {
-		u, err := url.Parse(schema+"://"+corsurl)
-		if err != nil {
-			// handle error
-			log.Println("Error in parsing URL: ", err)
-		}
-	
-		destinationUrl = u.Host
-		urlPath = u.Path
-		schema = u.Scheme
-		log.Println("Destination URL: ",destinationUrl,"URL Path: ",urlPath, "Schema: ",schema)
-	}else{
-		destinationUrl = h.Config.DestinationURL
-		urlPath =r.PathValue("route")
-
-		
-	}
-	r.Header.Del("X-Gag-Api-Key")
-	r.URL = &url.URL{
-		Scheme: schema,
-		Host: destinationUrl,
-		Path: urlPath,
-	}
-	log.Println(r)
-		
-	reverseProxy:= httputil.NewSingleHostReverseProxy(&url.URL{
-		Scheme: schema,
-		Host: destinationUrl,
-	})
-	log.Println("urlPath: ",reverseProxy)
-	reverseProxy.ModifyResponse = func(response *http.Response) error {
-		_ = h.reverseProxyResponseModifier(response)
-		return nil
-	}	
-	reverseProxy.ServeHTTP(w,r)
-}
-
-func (h *Handler) reverseProxyResponseModifier(response *http.Response) error {
-	// log.Println("Response from RPMODIFIER: ", response)
-	// set cors headers to the response\
-	if h.Config.Mode != "CORS" {
-		return nil
-	}
-	response.Header.Set("Access-Control-Allow-Origin", "*")
-	response.Header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	response.Header.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	response.Header.Set("X-API-GATEWAY", "github.com/codebreaker444/gag")
-	return nil
+	h.ForwardRequest(w, r, schema[0], secondURL)
 }
 
 func testRoute(wclient http.ResponseWriter, rclient *http.Request) {
