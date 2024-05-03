@@ -5,8 +5,8 @@
 ----
 # 🚀High Performance GO API Gateway(GAG) for JWT based Authentication and builtin CORS proxy
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/codebreaker444/gag)
-![Go](https://github.com/codebreaker444/gag/workflows/Go/badge.svg)
-![Go](https://github.com/codebreaker444/gag/workflows/Go/badge.svg)
+![Build](https://github.com/codebreaker444/gag/workflows/Go/badge.svg)
+![Tests](https://github.com/codebreaker444/gag/workflows/Go/badge.svg)
 
 
 
