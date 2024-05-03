@@ -36,7 +36,7 @@ func TestForwardRequest(t *testing.T) {
     }
     // method is GET, schema is https, corsurl is api.sampleapis.com/coffee/hot
 	
-    handler.ForwardRequest(rr, req, "https", "api.sampleapis.com/coffee/hot")
+    handler.ForwardRequest(rr, req, "https", "reqres.in/api/users?page=2")
 
     // Check the status code
     if status := rr.Code; status != http.StatusOK {

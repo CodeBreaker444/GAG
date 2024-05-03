@@ -4,8 +4,11 @@
 
 ----
 # 🚀High Performance GO API Gateway(GAG) for JWT based Authentication and builtin CORS proxy
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/codebreaker444/gag)
 ![Build](https://github.com/codebreaker444/gag/workflows/Go/badge.svg)
 ![Tests](https://github.com/codebreaker444/gag/workflows/Go/badge.svg)
+
+
 
 Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in 🐹**Go**! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both HTTP and gRPC (Coming soon!) for efficient microservice communication.
 <div align="center">
