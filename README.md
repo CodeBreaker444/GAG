@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="gag-logo.png" alt="GAG-GO-API-GATEWAY" width="30%" height="30%">
+    <img src="images/gag-logo.png" alt="GAG-GO-API-GATEWAY" width="30%" height="30%">
 </div>
 
 ----
@@ -8,11 +8,11 @@
 
 Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in 🐹**Go**! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both HTTP and gRPC (Coming soon!) for efficient microservice communication.
 <div align="center">
-    <img src="gag-gag.png" alt="GAG-GO-API-GATEWAY">
+    <img src="images/gag-gag.png" alt="GAG-GO-API-GATEWAY">
 </div>
 <p align="center"><u>Mode</u> - <b>GAG</b></p>
 <div align="center">
-    <img src="gag-cors.png" alt="GAG-GO-API-GATEWAY">
+    <img src="images/gag-cors.png" alt="GAG-GO-API-GATEWAY">
 </div>
 <p align="center"><u>Mode</u> - <b>CORS</b></p>
 
@@ -118,7 +118,8 @@ gag --GAG_AUTHENTICATED_PREFIX /auth \
     --SERVER_ADDRESS localhost:8000 \
     --GAG_DESTINATION_URL localhost:8000
 ```
-> Default CORS
+Verify Installation:
+`gag -h`
 
 ## Configuration
 
@@ -150,6 +151,7 @@ In CORS mode, the `CORS_API_KEY` parameter is used for API key authentication.
 - `GAG_DESTINATION_URL`: The destination URL where the GAG server will forward the requests (e.g., `http://localhost:8001`).
 - `MODE`: The mode in which the GAG server will run. This can be either `CORS` or [``GAG``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/GAG").
 - `CORS_API_KEY`: The API key required for CORS mode. This is mandatory in CORS mode.
+- `help`: Manual page
 
 Please replace the values in the [``config.yaml``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/config.yaml") file with your own before running the project.
 
