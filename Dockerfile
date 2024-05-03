@@ -33,4 +33,5 @@ COPY --from=builder /app/main .
 EXPOSE 8080
 
 # Command to run the executable
-ENTRYPOINT ["./main", "--config=/path/to/your/config.yaml"]
+ENTRYPOINT ["./main"]
+CMD ["--mode=CORS"]

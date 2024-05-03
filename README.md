@@ -3,10 +3,10 @@
 </div>
 
 ----
-# 🚀High Performance GO API Gateway(GAG) for JWT based Authentication with CORS support
+# 🚀High Performance GO API Gateway(GAG) for JWT based Authentication and builtin CORS proxy
 
 
-Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in GO ! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both gRPC and HTTP for efficient microservice communication.
+Welcome to the Lightning Fast GO API Gateway (GAG) repository, completely written in 🐹**Go**! This repository provides a blazing-fast API gateway solution for managing microservices communication with JWT-based authentication. GAG supports various algorithms for JWT decoding, including RSA, and seamlessly integrates both HTTP and gRPC (Coming soon!) for efficient microservice communication.
 <div align="center">
     <img src="gag-gag.png" alt="GAG-GO-API-GATEWAY">
 </div>
@@ -61,17 +61,68 @@ In this mode, the server uses JWT (JSON Web Tokens) for authentication. The clie
 
 ## Installation
 
+### Using Docker (Recommended)
+---
+1. CORS Mode
+```sh
+docker run codebreaker444/gag:latest --SERVER_ADDRESS localhost:8000 --mode CORS
+```
+Test with CURL
+```sh
+curl -v -H "x-gag-api-key: defaultCorsApiKey" http://localhost:8000/http://example.com/test/hello
+```
+You will receive the response from ```example.com``` along with CORS headers which attached by the GAG Proxy.
+
+2. GAG Mode
+
+Generate keys
+```
+ssh-keygen -t rsa -b 4096 -m PEM -f keys/jwtRS256.key
+# Don't add passphrase 
+openssl rsa -in keys/jwtRS256.key -pubout -outform PEM -out keys/jwtRS256.key.pub
+
+```
+
+```sh
+docker run -v keys:/root/ codebreaker444/gag:latest \
+    --GAG_AUTHENTICATED_PREFIX /auth \
+    --GAG_UNATHETICATED_PREFIX /unauth \
+    --GAG_JWT_RSA_PUBLIC_KEY keys/testkeys.pub \
+    --GAG_JWT_RSA_PRIVATE_KEY keys/testkeys.key \
+    --SERVER_ADDRESS localhost:8000 \
+    --GAG_DESTINATION_URL localhost:8080
+```
+In the above command all the authentication requests are forwarded to ```localhost:8080/auth``` and un-authenticated requests are forwarded to ```localhost:8080/unauth```
+
+Remember to send JWT token ```Authorization:``` ```Bearer <token>```
+### Using Install Script
+---
+
 To install the project, you need to run the [``install.sh``]("/Users/codebreaker/Desktop/PROJECTS/GAG-oss-project/GAG/install.sh") script. This script will detect your OS and architecture, download the appropriate binary from the project's GitHub releases, and install it in `/usr/local/bin`.
 
-> Default CORS
 
 ```sh
 curl -sSL https://raw.githubusercontent.com/CodeBreaker444/GAG/main/install.sh | sh
 ```
+1. CORS Mode
+```sh
+gag --SERVER_ADDRESS localhost:8000 --mode CORS
+```
+
+2. GAG Mode
+```sh
+gag --GAG_AUTHENTICATED_PREFIX /auth \
+    --GAG_UNATHETICATED_PREFIX /unauth \
+    --GAG_JWT_RSA_PUBLIC_KEY tests/testkeys.pub \
+    --GAG_JWT_RSA_PRIVATE_KEY tests/testkeys.key \
+    --SERVER_ADDRESS localhost:8000 \
+    --GAG_DESTINATION_URL localhost:8000
+```
+> Default CORS
 
 ## Configuration
 
-The project's behavior can be configured through the [``config.yaml``]("config.yaml") file. Here is a table describing each parameter in the file:
+The project's behavior can be configured through the [``config.yaml``]("config.yaml") file OR directly as command line arguments. Here is a table describing each parameter in the file:
 Sure, here are the tables divided for the two modes:
 
 | Mode | Parameter | Optional/Mandatory | Default Value |
@@ -82,13 +133,9 @@ Sure, here are the tables divided for the two modes:
 | GAG | `GAG_JWT_RSA_PRIVATE_KEY` | Optional | - |
 | GAG | `GAG_SERVER_ADDRESS` | Mandatory | - |
 | GAG | `GAG_DESTINATION_URL` | Mandatory | - |
-| GAG | `MODE` | Mandatory | - |
-| CORS | `GAG_AUTHENTICATED_PREFIX` | Mandatory | - |
-| CORS | `GAG_UNATHETICATED_PREFIX` | Mandatory | - |
-| CORS | `GAG_SERVER_ADDRESS` | Mandatory | - |
-| CORS | `GAG_DESTINATION_URL` | Mandatory | - |
-| CORS | `MODE` | Mandatory | - |
-| CORS | `CORS_API_KEY` | Mandatory | - |
+| UNIVERSAL | `MODE` | Mandatory | - |
+| UNIVERSAL | `help` | OPTIONAL | - |
+| CORS | `CORS_API_KEY` | OPTIONAL | - |
 
 In GAG mode, the `GAG_JWT_RSA_PUBLIC_KEY` and `GAG_JWT_RSA_PRIVATE_KEY` parameters are used for JWT token verification and generation, respectively. The `GAG_JWT_RSA_PRIVATE_KEY` is optional and only needed if you want to generate JWT tokens.
 

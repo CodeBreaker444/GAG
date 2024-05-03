@@ -18,7 +18,7 @@ type Config struct {
     UnauthenticatedPrefix string `yaml:"GAG_UNATHETICATED_PREFIX"` // 1. CHANGE THESE TO SNAKE CASE
 	JwtRSAPublicKey       string `yaml:"GAG_JWT_RSA_PUBLIC_KEY"`
     JwtRSAPrivateKey      string `yaml:"GAG_JWT_RSA_PRIVATE_KEY"`
-    ServerAddress         string `yaml:"GAG_SERVER_ADDRESS"`
+    ServerAddress         string `yaml:"SERVER_ADDRESS"`
 	DestinationURL        string `yaml:"GAG_DESTINATION_URL"`
 	CorsApiKey 		  	  string `yaml:"CORS_API_KEY"`
 	Mode 				  string `yaml:"MODE"`

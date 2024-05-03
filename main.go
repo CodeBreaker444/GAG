@@ -26,26 +26,28 @@ func main() {
     flag.Usage = func() {
         helpText := []string{
             "Usage of GAG:\n",
+            "  -MODE string",
+            "        Mode (GAG or CORS) (No default value, must be provided)",
+            "  -SERVER_ADDRESS string",
+            "        Server address (default \"localhost:8080\")",
+            "  -GAG_AUTHENTICATED_PREFIX string",
+            "        Authenticated prefix (default \"/defaultAuthenticatedPrefix\")",
+            "  -GAG_UNATHETICATED_PREFIX string",
+            "        Unauthenticated prefix (default \"/defaultUnauthenticatedPrefix\")",
+            "  -GAG_JWT_RSA_PUBLIC_KEY string",
+            "        Path to the JWT RSA public key (default \"/path/to/default/public/key\")",
+            "  -GAG_JWT_RSA_PRIVATE_KEY string",
+            "        Path to the JWT RSA private key (default \"/path/to/default/private/key\")",
+
+            "  -GAG_DESTINATION_URL string",
+            "        Destination URL (default \"http://defaultDestination.com\")",
+            "  -CORS_API_KEY string",
+            "        CORS API key (default \"defaultCorsApiKey\")",
+            "----------------------------------------","----------------------------------------",
             "  -config string",
             "        Path to the YAML configuration file (only when not using flags)",
-            "  -authenticatedPrefix string",
-            "        Authenticated prefix (default \"/defaultAuthenticatedPrefix\")",
-            "  -unauthenticatedPrefix string",
-            "        Unauthenticated prefix (default \"/defaultUnauthenticatedPrefix\")",
-            "  -jwtRSAPublicKey string",
-            "        Path to the JWT RSA public key (default \"/path/to/default/public/key\")",
-            "  -jwtRSAPrivateKey string",
-            "        Path to the JWT RSA private key (default \"/path/to/default/private/key\")",
-            "  -serverAddress string",
-            "        Server address (default \"localhost:8080\")",
-            "  -destinationURL string",
-            "        Destination URL (default \"http://defaultDestination.com\")",
-            "  -corsApiKey string",
-            "        CORS API key (default \"defaultCorsApiKey\")",
-            "  -mode string",
-            "        Mode (default \"GAG\")",
         }
-
+    
         color.Cyan(helpText[0])
         for i := 1; i < len(helpText); i++ {
             if i%2 == 0 {
@@ -57,18 +59,22 @@ func main() {
     }
     configFile := flag.String("config", "", "Path to the YAML configuration file")
         // Define flags for each configuration parameter
-    authenticatedPrefix := flag.String("authenticatedPrefix", "/defaultAuthenticatedPrefix", "Authenticated prefix")
-    unauthenticatedPrefix := flag.String("unauthenticatedPrefix", "/defaultUnauthenticatedPrefix", "Unauthenticated prefix")
-    jwtRSAPublicKey := flag.String("jwtRSAPublicKey", "/path/to/default/public/key", "Path to the JWT RSA public key")
-    jwtRSAPrivateKey := flag.String("jwtRSAPrivateKey", "/path/to/default/private/key", "Path to the JWT RSA private key")
-    serverAddress := flag.String("serverAddress", "localhost:8080", "Server address")
-    destinationURL := flag.String("destinationURL", "http://defaultDestination.com", "Destination URL")
-    corsApiKey := flag.String("corsApiKey", "defaultCorsApiKey", "CORS API key")
-    mode := flag.String("mode", "GAG", "Mode")
+    authenticatedPrefix := flag.String("GAG_AUTHENTICATED_PREFIX", "/defaultAuthenticatedPrefix", "Authenticated prefix")
+    unauthenticatedPrefix := flag.String("GAG_UNATHETICATED_PREFIX", "/defaultUnauthenticatedPrefix", "Unauthenticated prefix")
+    jwtRSAPublicKey := flag.String("GAG_JWT_RSA_PUBLIC_KEY", "/path/to/default/public/key", "Path to the JWT RSA public key")
+    jwtRSAPrivateKey := flag.String("GAG_JWT_RSA_PRIVATE_KEY", "/path/to/default/private/key", "Path to the JWT RSA private key")
+    serverAddress := flag.String("SERVER_ADDRESS", "localhost:8080", "Server address")
+    destinationURL := flag.String("GAG_DESTINATION_URL", "http://defaultDestination.com", "Destination URL")
+    corsApiKey := flag.String("CORS_API_KEY", "defaultCorsApiKey", "CORS API key")
+    mode := flag.String("MODE", "", "Mode")
     flag.Parse()
     if len(os.Args) == 1 {
         flag.Usage()
         os.Exit(1)
+    }
+    // check mode is provided
+    if *mode == "" {
+        log.Fatal("Mode must be provided")
     }
 
     if *configFile == "" {
