@@ -73,7 +73,7 @@ func main() {
         os.Exit(1)
     }
     // check mode is provided
-    if *mode == "" {
+    if *mode == "" && *configFile == ""{
         log.Fatal("Mode must be provided")
     }
 

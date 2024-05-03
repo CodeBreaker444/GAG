@@ -54,6 +54,7 @@ func (h *Handler) ForwardRequest(w http.ResponseWriter, r *http.Request, schema 
 func (h *Handler) reverseProxyResponseModifier(response *http.Response) error {
 	// log.Println("Response from RPMODIFIER: ", response)
 	// set cors headers to the response\
+	log.Println("Response from RPMODIFIER: ", response)
 	if h.Config.Mode != "CORS" {
 		return nil
 	}

@@ -4,21 +4,22 @@
 OS="$(uname)"
 ARCH="$(uname -m)"
 echo "OS: $OS, ARCH: $ARCH"
+RELEASE_VERSION="v1.0.0"
 
 # Set the download URL based on the OS and ARCH
 if [ "$OS" = "Linux" ]; then
     if [ "$ARCH" = "x86_64" ]; then
-        URL="https://github.com/codebreaker444/GAG/releases/download/v1.0/GAG-linux-amd64.tar.gz"
+        URL="https://github.com/codebreaker444/GAG/releases/download/$RELEASE_VERSION/GAG-linux-amd64.tar.gz"
         BINARY="GAG-linux-amd64"
     elif [ "$ARCH" = "arm64" ]; then
-        URL="https://github.com/codebreaker444/GAG/releases/download/v1.0/GAG-linux-arm64.tar.gz"
+        URL="https://github.com/codebreaker444/GAG/releases/download/$RELEASE_VERSION/GAG-linux-arm64.tar.gz"
         BINARY="GAG-linux-arm64"
     else
         echo "Unsupported architecture"
         exit 1
     fi
 elif [ "$OS" = "Darwin" ]; then
-    URL="https://github.com/codebreaker444/GAG/releases/download/v1.0/GAG-macos.tar.gz"
+    URL="https://github.com/codebreaker444/GAG/releases/download/$RELEASE_VERSION/GAG-macos.tar.gz"
     BINARY="GAG-macos"
 else
     echo "Unsupported OS"
